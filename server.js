@@ -4,8 +4,68 @@
 var request = require("request");
 // Scrapes our HTML
 var cheerio = require("cheerio");
+var express = require("express");
+var bodyParser = require("body-parser");
+var mongojs = require("mongojs");
+var mongoose = require('mongoose');
 
-// Run request to grab the HTML from awwards's clean website section
+var app = express();
+
+
+// Mongojs configuration
+var databaseUrl = "mongodb://heroku_jcjhxvx7:lqsfg22shtl09e8vbn1igrke2p@ds127878.mlab.com:27878/heroku_jcjhxvx7";
+var collections = ["newsStories"];
+
+
+// Hook our mongojs config to the db var
+var db = mongojs(databaseUrl, collections);
+db.on("error", function(error) {
+  console.log("Database Error:", error);
+});
+
+
+
+// Configure Mongoose Database and Schema
+// mongoose.connect('mongodb://heroku_jcjhxvx7:lqsfg22shtl09e8vbn1igrke2p@ds127878.mlab.com:27878/heroku_jcjhxvx7');
+
+// var Schema = mongoose.Schema,
+//     ObjectId = Schema.ObjectId;
+ 
+// var BlogPost = new Schema({
+//     author    : ObjectId,
+//     title     : String,
+//     body      : String,
+//     date      : Date
+// });
+
+// // retrieve my model 
+// var BlogPost = mongoose.model('BlogPost');
+ 
+// // create a blog post 
+// var post = new BlogPost();
+ 
+// // create a comment 
+// post.comments.push({ title: 'My comment' });
+ 
+// post.save(function (err) {
+//   if (!err) console.log('Success!');
+// });
+// Routes
+// ================================================
+
+
+app.get('/', function(req, res) {
+	var stories = db.newsStories.find({});
+	res.send("Hello Scraped News " + stories);
+})
+
+
+
+
+// Scraping Headlines
+// ================================================
+
+// Run request to grab the HTML from google news
 request("https://news.google.com/", function(error, response, html) {
 
   // Load the HTML into cheerio
@@ -22,12 +82,18 @@ request("https://news.google.com/", function(error, response, html) {
      *    Then, we "find" the lone child img-tag in that a-tag.
      *    Then, .attr grabs the imgs src value.
      * So: <figure>  ->  <a>  ->  <img src="link">  ->  "link"  */
-    var imgLink = $(element).text();//.find("a").attr("href")//.find("a")//.find("span").find("img")//.attr("src");//.attr("class").find("img").attr("src");
+    var headline = $(element).text();//.find("a").attr("href")//.find("a")//.find("span").find("img")//.attr("src");//.attr("class").find("img").attr("src");
 
     // Push the image's URL (saved to the imgLink var) into the result array
-    result.push({ Link: imgLink });
+    // result.push({ Link: headline });
+    db.newsStories.save({Headline: headline})
   });
 
   // With each link scraped, log the result to the console
-  console.log(result);
+  // console.log(result);
+  
+});
+
+app.listen(3001, function() {
+	console.log("App running on port: 3001!");
 });
