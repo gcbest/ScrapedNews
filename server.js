@@ -96,6 +96,8 @@ request("https://news.google.com/", function(error, response, html) {
   
 });
 
+module.exports = db;
+
 app.listen(3001, function() {
 	console.log("App running on port: 3001!");
 });
