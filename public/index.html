@@ -1,1 +1,25 @@
-index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Scraping News</title>
+</head>
+
+<body>
+    <div id="headers"></div>
+</body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script>
+var currentURL = window.location.origin;
+$.ajax({
+    url: currentURL + "/headlines",
+	method: 'GET' }).done(function(data) { 
+		var section = document.getElementById('headers'); 
+		for (var i = 0; i< 30; i++) { 
+			$('#headers').append("<hr>" + data[i].created + "<br><br>"); 
+		} 
+	}); 
+</script>
+
+</html>

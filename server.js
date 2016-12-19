@@ -8,7 +8,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var mongojs = require("mongojs");
 var mongoose = require('mongoose');
-
+var path = require('path');
 var app = express();
 
 
@@ -53,14 +53,16 @@ db.on("error", function(error) {
 // Routes
 // ================================================
 
-
-app.get('/', function(req, res) {
-	var stories = db.newsStories.find({});
-	res.send("Hello Scraped News " + stories);
+app.get('/', function(req, res) {	
+	res.sendFile(path.join(__dirname, '/public/index.html'));
 })
 
-
-
+app.get('/headlines', function(req, res) {
+	db.newsStories.find(function(err, docs) {
+		res.json(docs);
+		console.log(docs);
+	});
+})
 
 // Scraping Headlines
 // ================================================
@@ -86,7 +88,7 @@ request("https://news.google.com/", function(error, response, html) {
 
     // Push the image's URL (saved to the imgLink var) into the result array
     // result.push({ Link: headline });
-    db.newsStories.save({Headline: headline})
+    // db.newsStories.save({Headline: headline})
   });
 
   // With each link scraped, log the result to the console
