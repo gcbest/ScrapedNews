@@ -8,6 +8,10 @@ module.exports = {
     filename: "public/bundle.js"
   },
 
+  resolve: {
+    modulesDirectories: ['node_modules', 'src'],
+    extensions: ['', '.js', '.jsx', 'index.js', 'index.jsx', '.json', 'index.json']
+  },
   // This section desribes the transformations we will perform
   module: {
     loaders: [
@@ -22,8 +26,19 @@ module.exports = {
           // These are the specific transformations we'll be using.
           presets: ["react", "es2015"]
         }
+      },
+      { 
+        test: /\.json$/, 
+        loader: "json-loader" 
       }
     ]
+  },
+  node: {
+    net: "empty",
+    tls: "empty",
+    fs: "empty",
+    module: "empty",
+    dns: "empty"
   },
   // This lets us debug our react code in chrome dev tools. Errors will have lines and file names
   // Without this the console says all errors are coming from just coming from bundle.js
